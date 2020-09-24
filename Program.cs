@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CommandLine;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -16,12 +17,22 @@ namespace ThankYou
         //TODO: from an environment variable capture the channel ULR and token
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
             //TODO: Connect to the Twitch channel
             var twitchUserName = "emadashi"; //TODO: don't forget to parameterise
             var accessToken = ""; //TODO: don't forget to parameterise
             var channelName = "emadashi"; //TODO: don't forget to parameterise
 
+            var parsedArguments = Parser.Default.ParseArguments<Options>(args);
+            parsedArguments.WithParsed(options => {
+                accessToken = options.accessToken;
+                channelName = options.channelName;
+                twitchUserName = options.twitchUserName;
+
+                if (string.IsNullOrEmpty(twitchUserName))
+                {
+                    twitchUserName = channelName;        
+                }
+            });
 
             ConnectionCredentials credentials = new ConnectionCredentials(twitchUserName, accessToken);
             var clientOptions = new ClientOptions
@@ -39,7 +50,7 @@ namespace ThankYou
 
             Console.ReadKey(true);
 
-            foreach( var contributor in _contributorsToday) 
+            foreach (var contributor in _contributorsToday)
             {
                 Console.WriteLine(contributor);
             }
@@ -56,7 +67,7 @@ namespace ThankYou
             var author = e.ChatMessage.Username;
 
             var messageTokens = e.ChatMessage.Message.Split(' ');
-            if( messageTokens.Length > 1 && messageTokens[0] == "!thanks")
+            if (messageTokens.Length > 1 && messageTokens[0] == "!thanks")
             {
                 if (messageTokens.Length > 2)
                 {
@@ -66,5 +77,17 @@ namespace ThankYou
             }
             Console.WriteLine($"{author} wrote this: {input}");
         }
+    }
+
+    internal class Options
+    {
+        [Option]
+        public string twitchUserName {get; set;}
+
+        [Option(Required=true)]
+        public string channelName {get; set;}
+
+        [Option(Required=true)]
+        public string accessToken {get; set;}
     }
 }
