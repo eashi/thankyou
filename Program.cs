@@ -11,11 +11,11 @@ namespace ThankYou
 {
     class Program
     {
+        private static TwitchClient _client;
         private static List<string> _contributorsToday = new List<string>();
 
         static void Main(string[] args)
         {
-            //TODO: Connect to the Twitch channel
             var twitchUserName = ""; 
             var accessToken = ""; 
             var channelName = ""; 
@@ -40,11 +40,11 @@ namespace ThankYou
             };
 
             WebSocketClient customClient = new WebSocketClient(clientOptions);
-            var client = new TwitchClient(customClient);
-            client.Initialize(credentials, channelName);
-            client.OnMessageReceived += Client_OnMessageReceived;
-            client.OnLog += Client_OnLog;
-            client.Connect();
+            _client = new TwitchClient(customClient);
+            _client.Initialize(credentials, channelName);
+            _client.OnMessageReceived += Client_OnMessageReceived;
+            _client.OnLog += Client_OnLog;
+            _client.Connect();
 
             Console.ReadKey(true);
 
@@ -65,13 +65,16 @@ namespace ThankYou
             var author = e.ChatMessage.Username;
 
             var messageTokens = e.ChatMessage.Message.Split(' ');
-            if (messageTokens.Length > 1 && messageTokens[0] == "!thanks")
+            if (messageTokens.Length > 1 && messageTokens[0] == "!thanks" && e.ChatMessage.IsModerator)
             {
-                if (messageTokens.Length > 2)
+                if (messageTokens.Length == 2)
                 {
-                    //TODO: respond to the channel and say there should be only one argument to !thanks
+                    _contributorsToday.Add(messageTokens[1]);
                 }
-                _contributorsToday.Add(messageTokens[1]);
+                else 
+                {
+                    _client.SendWhisper(author, "There should be one argument for !thanks");
+                }
             }
             Console.WriteLine($"{author} wrote this: {input}");
         }
