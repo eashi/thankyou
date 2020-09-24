@@ -13,14 +13,12 @@ namespace ThankYou
     {
         private static List<string> _contributorsToday = new List<string>();
 
-        //TODO: Take an argument to establish git repo
-        //TODO: from an environment variable capture the channel ULR and token
         static void Main(string[] args)
         {
             //TODO: Connect to the Twitch channel
-            var twitchUserName = "emadashi"; //TODO: don't forget to parameterise
-            var accessToken = ""; //TODO: don't forget to parameterise
-            var channelName = "emadashi"; //TODO: don't forget to parameterise
+            var twitchUserName = ""; 
+            var accessToken = ""; 
+            var channelName = ""; 
 
             var parsedArguments = Parser.Default.ParseArguments<Options>(args);
             parsedArguments.WithParsed(options => {
