@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using CommandLine;
+using LibGit2Sharp;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -19,12 +21,17 @@ namespace ThankYou
             var twitchUserName = ""; 
             var accessToken = ""; 
             var channelName = ""; 
+            var repositoryUserName = "";
+            var repositoryPassword = "";
 
             var parsedArguments = Parser.Default.ParseArguments<Options>(args);
             parsedArguments.WithParsed(options => {
                 accessToken = options.accessToken;
                 channelName = options.channelName;
                 twitchUserName = options.twitchUserName;
+
+                repositoryUserName = options.repoUserName;
+                repositoryPassword = options.repoPassword;
 
                 if (string.IsNullOrEmpty(twitchUserName))
                 {
@@ -48,10 +55,19 @@ namespace ThankYou
 
             Console.ReadKey(true);
 
-            foreach (var contributor in _contributorsToday)
-            {
-                Console.WriteLine(contributor);
-            }
+            WriteContributorsToRepo(repositoryUserName, repositoryPassword);
+        }
+
+        private static void WriteContributorsToRepo(string username, string password)
+        {
+            //TODO: please move to be taken from a commandline from the chat stream
+            var repoUrl = "https://github.com/eashi/thankyou";
+
+            var co = new CloneOptions();
+            co.CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = username, Password = password };
+            var tempPath = Path.GetTempPath();
+            var directoryInfo = Directory.CreateDirectory(Path.Combine(tempPath, "Jaan"));
+            Repository.Clone(repoUrl, directoryInfo.FullName, co);
         }
 
         private static void Client_OnLog(object sender, OnLogArgs e)
@@ -90,5 +106,11 @@ namespace ThankYou
 
         [Option(Required=true)]
         public string accessToken {get; set;}
+        
+        [Option(Required = true)]
+        public string repoUserName { get; internal set; }
+        
+        [Option(Required = true)]
+        public string repoPassword { get; internal set; }
     }
 }
