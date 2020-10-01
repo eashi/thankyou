@@ -1,0 +1,4 @@
+- Melbshaker asks: "What happens if the contributor has already existed in the ReadMe file ?".
+    - for now, we don't do anything: the contributor is already there.
+    - in the future, maybe we can enhance it so the credit includes the suggestion/help they provided.
+- Give the moderator an example if the error whisper to make it easy for them.
