@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CommandLine;
 using LibGit2Sharp;
+using LibGit2Sharp.Handlers;
 using Microsoft.Toolkit.Parsers.Markdown;
 using Microsoft.Toolkit.Parsers.Markdown.Blocks;
 using TwitchLib.Client;
@@ -63,13 +65,24 @@ namespace ThankYou
 
         private static void WriteContributorsToRepo(string username, string password)
         {
+            var gitAuthorName = "Emad Alashi"; //TODO: move as a parameter to the bot
+            var gitAuthorEmail = "emad.ashi@gmail.com"; //TODO: move as a parameter to the bot
+
+            var nameOfThankyouBranch = "thankyou";
             //TODO: please move to be taken from a commandline from the chat stream
             var repoUrl = "https://github.com/eashi/thankyou";
             var contributorsHeader = "Acknowledgement"; //TODO: this should be a configuration
             var fileHoldingContributorsInfo = "readme.md"; //TODO: this should be a configuration
 
             var cloneOptions = new CloneOptions();
-            cloneOptions.CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = username, Password = password };
+            var gitCredentialsHandler = new CredentialsHandler(
+                    (url, usernameFromUrl, types) =>
+                        new UsernamePasswordCredentials()
+                        {
+                            Username = username,
+                            Password = password
+                        });
+            cloneOptions.CredentialsProvider = gitCredentialsHandler;
             var tempPath = Path.GetTempPath();
             var tempPathGitFolder = Path.Combine(tempPath, "Jaan"); //TODO: remove "Jaan" and create random folder?
             if (!Directory.Exists(tempPathGitFolder))
@@ -77,45 +90,45 @@ namespace ThankYou
                 var directoryInfo = Directory.CreateDirectory(tempPathGitFolder);
             }
             Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions); //TODO: if the repo clone is already here, should we delete and reclone? or should we assume correct repo here.
-
-            var pathToReadme = Path.Combine(tempPathGitFolder, fileHoldingContributorsInfo);
-
-            // [Start of expirement]
-            // var readMeContent = File.ReadAllText(pathToReadme);
-
-            // var readMeFileParsed = new MarkdownDocument();
-            // readMeFileParsed.Parse(readMeContent);
-
-            // //find the "CONTRIBUTORS" section. The title of the section should be a configuration
-            // for(int index = 0; index <= readMeFileParsed.Blocks.Count-1;  index++)
-            // {
-            //     Console.WriteLine(readMeFileParsed.Blocks[index].ToString());
-            //     if(readMeFileParsed.Blocks[index] is HeaderBlock &&  readMeFileParsed.Blocks[index].ToString().Trim() == contributorsHeader)
-            //     {
-            //         for(int index2=index+1; index2 <= readMeFileParsed.Blocks.Count-1; index2++)
-            //         {
-            //             if (readMeFileParsed.Blocks[index2] is ListBlock)
-            //             {
-            //                 Console.WriteLine($"Here is your friends: {readMeFileParsed.Blocks[index2].ToString()}");
-            //                 break;
-            //             }
-            //         }
-            //     }
-            // }
-            // [End of expirement]
-
-            // Change the file and save it
-            using (StreamWriter sw = File.AppendText(pathToReadme))
+            using (var repo = new Repository(tempPathGitFolder))
             {
-                foreach( var contributor in _contributorsToday)
+                if (!repo.Branches.Any(b => b.FriendlyName == nameOfThankyouBranch))
                 {
-                    sw.WriteLine(contributor);
+                    repo.CreateBranch(nameOfThankyouBranch);
                 }
+
+                var thankyouBranch = Commands.Checkout(repo, nameOfThankyouBranch);
+
+                var pathToReadme = Path.Combine(tempPathGitFolder, fileHoldingContributorsInfo);
+                // Change the file and save it
+                using (StreamWriter sw = File.AppendText(pathToReadme))
+                {
+                    foreach (var contributor in _contributorsToday)
+                    {
+                        sw.WriteLine(contributor);
+                    }
+                }
+
+                // Commit the file to the repo, on a non-master branch
+                repo.Index.Add(fileHoldingContributorsInfo);
+                repo.Index.Write();
+
+                // Create the committer's signature and commit
+                Signature author = new Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
+                Signature committer = author;
+
+                // Commit to the repository
+                Commit commit = repo.Commit("A new list of awesome contributors", author, committer);
+
+                //Push the commit to origin
+                repo.Branches.Update(thankyouBranch, 
+                b => b.UpstreamBranch = thankyouBranch.CanonicalName,
+                b => b.Remote = repo.Network.Remotes.First().Name);
+                LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
+                options.CredentialsProvider = gitCredentialsHandler;
+                repo.Network.Push( thankyouBranch, options);
+
             }
-
-            //TODO: commit the file to the repo, on a non-master branch
-
-            //TODO: push the commit to origin
         }
 
         private static void Client_OnLog(object sender, OnLogArgs e)
