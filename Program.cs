@@ -20,14 +20,15 @@ namespace ThankYou
 
         static void Main(string[] args)
         {
-            var twitchUserName = ""; 
-            var accessToken = ""; 
-            var channelName = ""; 
+            var twitchUserName = "";
+            var accessToken = "";
+            var channelName = "";
             var repositoryUserName = "";
             var repositoryPassword = "";
 
             var parsedArguments = Parser.Default.ParseArguments<Options>(args);
-            parsedArguments.WithParsed(options => {
+            parsedArguments.WithParsed(options =>
+            {
                 accessToken = options.accessToken;
                 channelName = options.channelName;
                 twitchUserName = options.twitchUserName;
@@ -37,7 +38,7 @@ namespace ThankYou
 
                 if (string.IsNullOrEmpty(twitchUserName))
                 {
-                    twitchUserName = channelName;        
+                    twitchUserName = channelName;
                 }
             });
 
@@ -71,36 +72,46 @@ namespace ThankYou
             cloneOptions.CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = username, Password = password };
             var tempPath = Path.GetTempPath();
             var tempPathGitFolder = Path.Combine(tempPath, "Jaan"); //TODO: remove "Jaan" and create random folder?
-            if(!Directory.Exists(tempPathGitFolder))
+            if (!Directory.Exists(tempPathGitFolder))
             {
                 var directoryInfo = Directory.CreateDirectory(tempPathGitFolder);
             }
             Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions); //TODO: if the repo clone is already here, should we delete and reclone? or should we assume correct repo here.
 
             var pathToReadme = Path.Combine(tempPathGitFolder, fileHoldingContributorsInfo);
-            var readMeContent = File.ReadAllText(pathToReadme);
 
-            var readMeFileParsed = new MarkdownDocument();
-            readMeFileParsed.Parse(readMeContent);
+            // [Start of expirement]
+            // var readMeContent = File.ReadAllText(pathToReadme);
 
-            //find the "CONTRIBUTORS" section. The title of the section should be a configuration
-            for(int index = 0; index <= readMeFileParsed.Blocks.Count-1;  index++)
+            // var readMeFileParsed = new MarkdownDocument();
+            // readMeFileParsed.Parse(readMeContent);
+
+            // //find the "CONTRIBUTORS" section. The title of the section should be a configuration
+            // for(int index = 0; index <= readMeFileParsed.Blocks.Count-1;  index++)
+            // {
+            //     Console.WriteLine(readMeFileParsed.Blocks[index].ToString());
+            //     if(readMeFileParsed.Blocks[index] is HeaderBlock &&  readMeFileParsed.Blocks[index].ToString().Trim() == contributorsHeader)
+            //     {
+            //         for(int index2=index+1; index2 <= readMeFileParsed.Blocks.Count-1; index2++)
+            //         {
+            //             if (readMeFileParsed.Blocks[index2] is ListBlock)
+            //             {
+            //                 Console.WriteLine($"Here is your friends: {readMeFileParsed.Blocks[index2].ToString()}");
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
+            // [End of expirement]
+
+            // Change the file and save it
+            using (StreamWriter sw = File.AppendText(pathToReadme))
             {
-                Console.WriteLine(readMeFileParsed.Blocks[index].ToString());
-                if(readMeFileParsed.Blocks[index] is HeaderBlock &&  readMeFileParsed.Blocks[index].ToString().Trim() == contributorsHeader)
+                foreach( var contributor in _contributorsToday)
                 {
-                    for(int index2=index+1; index2 <= readMeFileParsed.Blocks.Count-1; index2++)
-                    {
-                        if (readMeFileParsed.Blocks[index2] is ListBlock)
-                        {
-                            Console.WriteLine($"Here is your friends: {readMeFileParsed.Blocks[index2].ToString()}");
-                            break;
-                        }
-                    }
+                    sw.WriteLine(contributor);
                 }
             }
-
-            //TOOD: change the file and save it
 
             //TODO: commit the file to the repo, on a non-master branch
 
@@ -124,7 +135,7 @@ namespace ThankYou
                 {
                     _contributorsToday.Add(messageTokens[1]);
                 }
-                else 
+                else
                 {
                     _client.SendWhisper(author, "There should be one argument for !thanks");
                 }
@@ -136,17 +147,17 @@ namespace ThankYou
     internal class Options
     {
         [Option]
-        public string twitchUserName {get; set;}
+        public string twitchUserName { get; set; }
 
-        [Option(Required=true)]
-        public string channelName {get; set;}
+        [Option(Required = true)]
+        public string channelName { get; set; }
 
-        [Option(Required=true)]
-        public string accessToken {get; set;}
-        
+        [Option(Required = true)]
+        public string accessToken { get; set; }
+
         [Option(Required = true)]
         public string repoUserName { get; internal set; }
-        
+
         [Option(Required = true)]
         public string repoPassword { get; internal set; }
     }
