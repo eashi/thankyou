@@ -75,6 +75,7 @@ namespace ThankYou
             var fileHoldingContributorsInfo = "readme.md"; //TODO: this should be a configuration
 
             var cloneOptions = new CloneOptions();
+            cloneOptions.BranchName = nameOfThankyouBranch;
             var gitCredentialsHandler = new CredentialsHandler(
                     (url, usernameFromUrl, types) =>
                         new UsernamePasswordCredentials()
@@ -84,7 +85,8 @@ namespace ThankYou
                         });
             cloneOptions.CredentialsProvider = gitCredentialsHandler;
             var tempPath = Path.GetTempPath();
-            var tempPathGitFolder = Path.Combine(tempPath, "Jaan"); //TODO: remove "Jaan" and create random folder?
+            Directory.Delete(Path.Combine(tempPath, "Jaan"), true); //TODO: Don't remove and re-clone, clone only if doesn't exist
+            var tempPathGitFolder = Path.Combine(tempPath, "Jaan");
             if (!Directory.Exists(tempPathGitFolder))
             {
                 var directoryInfo = Directory.CreateDirectory(tempPathGitFolder);
@@ -92,12 +94,29 @@ namespace ThankYou
             Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions); //TODO: if the repo clone is already here, should we delete and reclone? or should we assume correct repo here.
             using (var repo = new Repository(tempPathGitFolder))
             {
-                if (!repo.Branches.Any(b => b.FriendlyName == nameOfThankyouBranch))
+                var remote = repo.Network.Remotes["origin"];
+                var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
+                foreach( var refSpec in remote.FetchRefSpecs)
                 {
-                    repo.CreateBranch(nameOfThankyouBranch);
+                    Console.WriteLine($"Source: {refSpec.Source}");
+                    Console.WriteLine($"Destination: {refSpec.Destination}");
                 }
 
-                var thankyouBranch = Commands.Checkout(repo, nameOfThankyouBranch);
+                foreach (var myRef in repo.Refs )
+                {
+                    Console.WriteLine($"ref: {myRef}");
+                }
+                Commands.Fetch(repo, remote.Name, refSpecs, null, "");
+                Console.WriteLine($"Just to check the CanonicalName: {repo.Refs.First().CanonicalName}");
+                if (repo.Head.FriendlyName != nameOfThankyouBranch)
+                {
+                    var newThankyouBranch = repo.CreateBranch(nameOfThankyouBranch);
+                    repo.Branches.Update(newThankyouBranch,
+                      b => b.UpstreamBranch = newThankyouBranch.CanonicalName,
+                      b => b.Remote = repo.Network.Remotes.First().Name);
+                    Commands.Checkout(repo, newThankyouBranch);
+                }
+
 
                 var pathToReadme = Path.Combine(tempPathGitFolder, fileHoldingContributorsInfo);
                 // Change the file and save it
@@ -121,12 +140,9 @@ namespace ThankYou
                 Commit commit = repo.Commit("A new list of awesome contributors", author, committer);
 
                 //Push the commit to origin
-                repo.Branches.Update(thankyouBranch, 
-                b => b.UpstreamBranch = thankyouBranch.CanonicalName,
-                b => b.Remote = repo.Network.Remotes.First().Name);
                 LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
                 options.CredentialsProvider = gitCredentialsHandler;
-                repo.Network.Push( thankyouBranch, options);
+                repo.Network.Push(repo.Head, options);
 
             }
         }
@@ -142,16 +158,25 @@ namespace ThankYou
             var author = e.ChatMessage.Username;
 
             var messageTokens = e.ChatMessage.Message.Split(' ');
-            if (messageTokens.Length > 1 && messageTokens[0] == "!thanks" && e.ChatMessage.IsModerator)
+            if (messageTokens.Length > 1 && messageTokens[0] == "!thanks")
             {
-                if (messageTokens.Length == 2)
+                if (e.ChatMessage.IsModerator)
                 {
-                    _contributorsToday.Add(messageTokens[1]);
+                    if (messageTokens.Length == 2)
+                    {
+                        Console.WriteLine($"Adding '{messageTokens[1]}' to the contributors list");
+                        _contributorsToday.Add(messageTokens[1]);
+                    }
+                    else
+                    {
+                        _client.SendWhisper(author, "There should be one argument for !thanks");
+                    }
                 }
                 else
                 {
-                    _client.SendWhisper(author, "There should be one argument for !thanks");
+                    Console.WriteLine("Sorry, you're not a moderator");
                 }
+
             }
             Console.WriteLine($"{author} wrote this: {input}");
         }
