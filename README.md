@@ -13,3 +13,4 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [Vote_Anarchy](https://twitch.tv/vote_anarchy)
 - [CodeAndCoffee](https://twitch.tv/codeandcoffee)
 - [yawnston](https://github.com/yawnston)
+EllenRipley
