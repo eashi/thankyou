@@ -75,7 +75,6 @@ namespace ThankYou
             var fileHoldingContributorsInfo = "readme.md"; //TODO: this should be a configuration
 
             var cloneOptions = new CloneOptions();
-            cloneOptions.BranchName = nameOfThankyouBranch;
             var gitCredentialsHandler = new CredentialsHandler(
                     (url, usernameFromUrl, types) =>
                         new UsernamePasswordCredentials()
@@ -85,7 +84,11 @@ namespace ThankYou
                         });
             cloneOptions.CredentialsProvider = gitCredentialsHandler;
             var tempPath = Path.GetTempPath();
-            Directory.Delete(Path.Combine(tempPath, "Jaan"), true); //TODO: Don't remove and re-clone, clone only if doesn't exist
+            var tempPathForRepo = Path.Combine(tempPath, "Jaan");
+            if (Directory.Exists(tempPathForRepo))
+            {
+                Directory.Delete(tempPathForRepo, true); //TODO: Don't remove and re-clone, clone only if doesn't exist
+            }
             var tempPathGitFolder = Path.Combine(tempPath, "Jaan");
             if (!Directory.Exists(tempPathGitFolder))
             {
@@ -96,18 +99,13 @@ namespace ThankYou
             {
                 var remote = repo.Network.Remotes["origin"];
                 var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
-                foreach( var refSpec in remote.FetchRefSpecs)
-                {
-                    Console.WriteLine($"Source: {refSpec.Source}");
-                    Console.WriteLine($"Destination: {refSpec.Destination}");
+                
+                var remoteThankYouBranch = repo.Branches.FirstOrDefault(b => b.FriendlyName == repo.Network.Remotes.FirstOrDefault()?.Name + "/" + nameOfThankyouBranch);
+
+                if (remoteThankYouBranch != null) {
+                    Commands.Checkout(repo, remoteThankYouBranch);
                 }
 
-                foreach (var myRef in repo.Refs )
-                {
-                    Console.WriteLine($"ref: {myRef}");
-                }
-                Commands.Fetch(repo, remote.Name, refSpecs, null, "");
-                Console.WriteLine($"Just to check the CanonicalName: {repo.Refs.First().CanonicalName}");
                 if (repo.Head.FriendlyName != nameOfThankyouBranch)
                 {
                     var newThankyouBranch = repo.CreateBranch(nameOfThankyouBranch);

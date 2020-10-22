@@ -11,10 +11,10 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.1/ThankYou.dll",
-            "args": [],
+            "args": ["--twitchusername", "${env:twitchUserName}", "--channelname", "${env:twitchChannelName}", "--accesstoken", "${env:twitchAccessToken}", "--repousername", "${env:gitUserName}", "--repopassword", "${env:githubAccessToken}"],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "internalConsole",
+            "console": "externalTerminal",
             "stopAtEntry": false
         },
         {
