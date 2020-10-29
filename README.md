@@ -18,3 +18,4 @@ EllenRipley
 Gandalf
 ThorinOakenshield
 Smaug
+Gimli
