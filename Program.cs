@@ -21,32 +21,22 @@ namespace ThankYou
     {
         private static TwitchClient _client;
         private static List<string> _contributorsToday = new List<string>();
+        private static Options _parsedOptions;
 
         static async Task Main(string[] args)
         {
-            var twitchUserName = "";
-            var accessToken = "";
-            var channelName = "";
-            var repositoryUserName = "";
-            var repositoryPassword = "";
-
             var parsedArguments = Parser.Default.ParseArguments<Options>(args);
             parsedArguments.WithParsed(options =>
             {
-                accessToken = options.accessToken;
-                channelName = options.channelName;
-                twitchUserName = options.twitchUserName;
+                _parsedOptions = options;
 
-                repositoryUserName = options.repoUserName;
-                repositoryPassword = options.repoPassword;
-
-                if (string.IsNullOrEmpty(twitchUserName))
+                if (string.IsNullOrEmpty(_parsedOptions.twitchUserName))
                 {
-                    twitchUserName = channelName;
+                    _parsedOptions.twitchUserName = _parsedOptions.channelName;
                 }
             });
 
-            ConnectionCredentials credentials = new ConnectionCredentials(twitchUserName, accessToken);
+            ConnectionCredentials credentials = new ConnectionCredentials(_parsedOptions.twitchUserName, _parsedOptions.accessToken);
             var clientOptions = new ClientOptions
             {
                 MessagesAllowedInPeriod = 750,
@@ -55,26 +45,22 @@ namespace ThankYou
 
             WebSocketClient customClient = new WebSocketClient(clientOptions);
             _client = new TwitchClient(customClient);
-            _client.Initialize(credentials, channelName);
+            _client.Initialize(credentials, _parsedOptions.channelName);
             _client.OnMessageReceived += Client_OnMessageReceived;
             _client.OnLog += Client_OnLog;
             _client.Connect();
 
             Console.ReadKey(true);
 
-            await WriteContributorsToRepo(repositoryUserName, repositoryPassword);
+            await WriteContributorsToRepo(_parsedOptions.repoUserName, _parsedOptions.repoPassword);
         }
 
         private static async Task WriteContributorsToRepo(string username, string password)
         {
-            var gitAuthorName = "Emad Alashi"; //TODO: move as a parameter to the bot
-            var gitAuthorEmail = "emad.ashi@gmail.com"; //TODO: move as a parameter to the bot
-
             var nameOfThankyouBranch = "thankyou";
-            //TODO: please move to be taken from a commandline from the chat stream
-            var repoUrl = "https://github.com/eashi/thankyou";
-            var contributorsHeader = "Acknowledgement"; //TODO: this should be a configuration
-            var fileHoldingContributorsInfo = "readme.md"; //TODO: this should be a configuration
+            var repoUrl = _parsedOptions.repositoryUrl;
+            var contributorsHeader = _parsedOptions.acknowledgementSection;
+            var fileHoldingContributorsInfo = _parsedOptions.fileInRepoForAcknowledgement;
 
             var cloneOptions = new CloneOptions();
             var gitCredentialsHandler = new CredentialsHandler(
@@ -100,7 +86,7 @@ namespace ThankYou
             using (var repo = new LibGit2Sharp.Repository(tempPathGitFolder))
             {
                 var remote = repo.Network.Remotes["origin"];
-                var defaultBranch = repo.Branches.FirstOrDefault( b => b.IsCurrentRepositoryHead == true);
+                var defaultBranch = repo.Branches.FirstOrDefault(b => b.IsCurrentRepositoryHead == true);
                 var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
 
                 var remoteThankYouBranch = repo.Branches.FirstOrDefault(b => b.FriendlyName == repo.Network.Remotes.FirstOrDefault()?.Name + "/" + nameOfThankyouBranch);
@@ -135,7 +121,7 @@ namespace ThankYou
                 repo.Index.Write();
 
                 // Create the committer's signature and commit
-                var author = new LibGit2Sharp.Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
+                var author = new LibGit2Sharp.Signature(_parsedOptions.gitAuthorName, _parsedOptions.gitAuthorEmail, DateTime.Now);
                 var committer = author;
 
                 // Commit to the repository
@@ -213,5 +199,21 @@ namespace ThankYou
 
         [Option(Required = true)]
         public string repoPassword { get; internal set; }
+
+        [Option(Required = true)]
+        public string gitAuthorEmail { get; set; }
+
+        [Option(Required = true)]
+        public string gitAuthorName { get; set; }
+
+        [Option(Required = true)]
+        public string repositoryUrl { get; set; }
+
+        [Option(Default = "readme.md")]
+        public string fileInRepoForAcknowledgement { get; set; }
+
+        [Option(Default = "Acknowledgement")]
+        public string acknowledgementSection { get; set; }
+
     }
 }
