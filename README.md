@@ -15,3 +15,4 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [yawnston](https://github.com/yawnston)
 EllenRipley
 🪐GiovanniCassini🪐
+Gandalf
