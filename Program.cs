@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using CommandLine;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 using Microsoft.Toolkit.Parsers.Markdown;
 using Microsoft.Toolkit.Parsers.Markdown.Blocks;
+using Octokit;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -20,7 +22,7 @@ namespace ThankYou
         private static TwitchClient _client;
         private static List<string> _contributorsToday = new List<string>();
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var twitchUserName = "";
             var accessToken = "";
@@ -60,10 +62,10 @@ namespace ThankYou
 
             Console.ReadKey(true);
 
-            WriteContributorsToRepo(repositoryUserName, repositoryPassword);
+            await WriteContributorsToRepo(repositoryUserName, repositoryPassword);
         }
 
-        private static void WriteContributorsToRepo(string username, string password)
+        private static async Task WriteContributorsToRepo(string username, string password)
         {
             var gitAuthorName = "Emad Alashi"; //TODO: move as a parameter to the bot
             var gitAuthorEmail = "emad.ashi@gmail.com"; //TODO: move as a parameter to the bot
@@ -94,15 +96,17 @@ namespace ThankYou
             {
                 var directoryInfo = Directory.CreateDirectory(tempPathGitFolder);
             }
-            Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions); //TODO: if the repo clone is already here, should we delete and reclone? or should we assume correct repo here.
-            using (var repo = new Repository(tempPathGitFolder))
+            LibGit2Sharp.Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions); //TODO: if the repo clone is already here, should we delete and reclone? or should we assume correct repo here.
+            using (var repo = new LibGit2Sharp.Repository(tempPathGitFolder))
             {
                 var remote = repo.Network.Remotes["origin"];
+                var defaultBranch = repo.Branches.FirstOrDefault( b => b.IsCurrentRepositoryHead == true);
                 var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
-                
+
                 var remoteThankYouBranch = repo.Branches.FirstOrDefault(b => b.FriendlyName == repo.Network.Remotes.FirstOrDefault()?.Name + "/" + nameOfThankyouBranch);
 
-                if (remoteThankYouBranch != null) {
+                if (remoteThankYouBranch != null)
+                {
                     Commands.Checkout(repo, remoteThankYouBranch);
                 }
 
@@ -131,17 +135,30 @@ namespace ThankYou
                 repo.Index.Write();
 
                 // Create the committer's signature and commit
-                Signature author = new Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
-                Signature committer = author;
+                var author = new LibGit2Sharp.Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
+                var committer = author;
 
                 // Commit to the repository
-                Commit commit = repo.Commit("A new list of awesome contributors", author, committer);
+                var commit = repo.Commit("A new list of awesome contributors", author, committer);
 
                 //Push the commit to origin
                 LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
                 options.CredentialsProvider = gitCredentialsHandler;
                 repo.Network.Push(repo.Head, options);
 
+                // Login to GitHub with Octokit
+                var githubClient = new GitHubClient(new ProductHeaderValue(username));
+                githubClient.Credentials = new Octokit.Credentials(password);
+
+                try
+                {
+                    //  Create a PR on the repo for the branch "thank you"
+                    await githubClient.PullRequest.Create(username, "thankyou", new NewPullRequest("Give credit for people on Twitch chat", nameOfThankyouBranch, defaultBranch.FriendlyName));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
         }
 
