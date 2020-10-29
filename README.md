@@ -17,3 +17,4 @@ EllenRipley
 🪐GiovanniCassini🪐
 Gandalf
 ThorinOakenshield
+Smaug
