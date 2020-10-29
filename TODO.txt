@@ -1,4 +1,9 @@
+- Refactor in general, create smaller functions...etc.
+- Create a `!todo` command to show all the todo items in the TODO.txt file, And/Or show all the //TODO comments in the repo
+- Consider not removing and re-cloning the repo everytime. Just fetch if it already exists.
 - Melbshaker asks: "What happens if the contributor has already existed in the ReadMe file ?".
     - for now, we don't do anything: the contributor is already there.
     - in the future, maybe we can enhance it so the credit includes the suggestion/help they provided.
 - Give the moderator an example if the error whisper to make it easy for them.
+- Part of refactoring, pull dependencies out from `WriteContributorsToRepo` so that it can be injected and make the method testable.
+- If considering to run this in a container, remove the `Console.Read()` method from `Main`
