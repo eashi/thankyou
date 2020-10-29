@@ -16,3 +16,4 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 EllenRipley
 🪐GiovanniCassini🪐
 Gandalf
+ThorinOakenshield
