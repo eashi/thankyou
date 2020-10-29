@@ -19,3 +19,4 @@ Gandalf
 ThorinOakenshield
 Smaug
 Gimli
+Eowyn
