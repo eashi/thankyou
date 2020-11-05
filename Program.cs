@@ -155,15 +155,16 @@ namespace ThankYou
             foreach(var line in allLinesRead)
             {
                 var newLine = line;
-                if( line == "[//]: # (ReplaceThankYou: - [@name](https://twitch.tv/@name)")
+                if( line.StartsWith("[//]: # (ReplaceThankYou:"))
                 {
                     finalResult.Add(line);
+                    
                     foreach(var contributor in contributorsToday)
                     {
                         //if contributor already exists
 
-                        var thankYouLine = line.Replace("[//]: (ReplaceThankYou: ", "").Replace("@name", contributor); //This is broken
-                        finalResult.Add(thankYouLine);
+                        var thankYouLine = line.Replace("[//]: # (ReplaceThankYou:", "").Replace("@name", contributor); //This is broken
+                        finalResult.Add(thankYouLine.Substring(0, thankYouLine.Length - 1));
                     }
                 }
                 else
