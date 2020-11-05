@@ -148,27 +148,53 @@ namespace ThankYou
 
             List<string> finalResult = new List<string>();
 
-            //filter
-            var filteredContributors = contributorsToday.Where(contributor => !allLinesRead.Any(line => line.Contains(contributor)));
-            //end of filter
-
+            bool foundThankYouBlock = false;
+            List<string> newContributorLines = new List<string>();
+            List<string> existingContributorLines = new List<string>();
+            // This is a state machine with three states: Before contributors, contributors, and after contributors
+            // Since the Before and After states behave the same way, I'm cheating and using a boolean and reducing
+            // it down to two states. Hopefully it still makes sense.
             foreach(var line in allLinesRead)
             {
-                var newLine = line;
-                if( line.StartsWith("[//]: # (ReplaceThankYou:"))
+                if (line.Equals("[//]: # (ThankYouBlockStart)"))
                 {
+                    // Found the start of the thank you block, so start collecting contributors
+                    foundThankYouBlock = true;
+                    finalResult.Add(line);
+                }
+                else if (line.Equals("[//]: # (ThankYouBlockEnd)") && foundThankYouBlock)
+                {
+                    // Work out which ones to add
+                    var contributorsToOutput = newContributorLines.Except(existingContributorLines);
+                    // Add them to the end
+                    finalResult.AddRange(contributorsToOutput);
+                    // Now add our closing block again
+                    finalResult.Add(line);
+                    // Finally, turn off collection of contributors
+                    foundThankYouBlock = false;
+                }
+                else if (line.StartsWith("[//]: # (ThankYouTemplate:") && foundThankYouBlock)
+                {
+                    // found the template, so now we can calculate the new lines
                     finalResult.Add(line);
                     
                     foreach(var contributor in contributorsToday)
                     {
                         //if contributor already exists
 
-                        var thankYouLine = line.Replace("[//]: # (ReplaceThankYou:", "").Replace("@name", contributor); //This is broken
-                        finalResult.Add(thankYouLine.Substring(0, thankYouLine.Length - 1));
+                        var thankYouLine = line.Replace("[//]: # (ThankYouTemplate:", "").Replace("@name", contributor); //This is broken
+                        newContributorLines.Add(thankYouLine.Substring(0, thankYouLine.Length - 1));
                     }
+                }
+                else if (foundThankYouBlock)
+                {
+                    // A "normal" line inside the thank you block is a contributor
+                    existingContributorLines.Add(line);
+                    finalResult.Add(line);
                 }
                 else
                 {
+                    // A normal line, just add it
                     finalResult.Add(line);
                 }
             }
