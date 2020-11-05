@@ -182,7 +182,7 @@ namespace ThankYou
                     {
                         //if contributor already exists
 
-                        var thankYouLine = line.Replace("[//]: # (ThankYouTemplate:", "").Replace("@name", contributor); //This is broken
+                        var thankYouLine = line.Replace("[//]: # (ThankYouTemplate:", "").Replace("@name", contributor);
                         newContributorLines.Add(thankYouLine.Substring(0, thankYouLine.Length - 1));
                     }
                 }
