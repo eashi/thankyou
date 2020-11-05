@@ -108,14 +108,8 @@ namespace ThankYou
 
                 var pathToReadme = Path.Combine(tempPathGitFolder, fileHoldingContributorsInfo);
                 // Change the file and save it
-                using (StreamWriter sw = File.AppendText(pathToReadme))
-                {
-                    foreach (var contributor in _contributorsToday)
-                    {
-                        sw.WriteLine(contributor);
-                    }
-                }
-
+                AddContributorsToMarkdownFile(pathToReadme, _contributorsToday);
+                
                 // Commit the file to the repo, on a non-master branch
                 repo.Index.Add(fileHoldingContributorsInfo);
                 repo.Index.Write();
@@ -146,6 +140,40 @@ namespace ThankYou
                     Console.WriteLine(ex);
                 }
             }
+        }
+
+        private static void AddContributorsToMarkdownFile(string pathToReadme, List<string> contributorsToday)
+        {
+            string[] allLinesRead = File.ReadAllLines(pathToReadme);
+
+            List<string> finalResult = new List<string>();
+
+            //filter
+            var filteredContributors = contributorsToday.Where(contributor => !allLinesRead.Any(line => line.Contains(contributor)));
+            //end of filter
+
+            foreach(var line in allLinesRead)
+            {
+                var newLine = line;
+                if( line == "[//]: # (ReplaceThankYou: - [@name](https://twitch.tv/@name)")
+                {
+                    finalResult.Add(line);
+                    foreach(var contributor in contributorsToday)
+                    {
+                        //if contributor already exists
+
+                        var thankYouLine = line.Replace("[//]: (ReplaceThankYou: ", "").Replace("@name", contributor); //This is broken
+                        finalResult.Add(thankYouLine);
+                    }
+                }
+                else
+                {
+                    finalResult.Add(line);
+                }
+            }
+
+            File.WriteAllLines(pathToReadme, finalResult);
+
         }
 
         private static void Client_OnLog(object sender, OnLogArgs e)
