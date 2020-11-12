@@ -1,4 +1,5 @@
 - jonp333: The doco has an error handling example: CommandLine.Parser.Default.ParseArguments<Options>(args) .WithParsed(RunOptions) .WithNotParsed(HandleParseError);
+- jonp333: Change the environment variables to match all intended parameter
 - Refactor in general, create smaller functions...etc.
 - Create a `!todo` command to show all the todo items in the TODO.txt file, And/Or show all the //TODO comments in the repo
 - Consider not removing and re-cloning the repo everytime. Just fetch if it already exists.
@@ -10,3 +11,6 @@
 - If considering to run this in a container, remove the `Console.Read()` method from `Main`
 - Feature request: If someone has been thanked, give them the ability to nominate their Twitter name or GitHub profile to go in the contributorsgit 
 - Consider from jonp333: Could the chat bot temporarily edit the name in it's .gitconfig to the name of the person to thank and then make a commit to the repo. The git log would then show their name.
+- Moderatorcodeandcoffee
+- CodeAndCoffee: Another feature request has come to mind. The !thanks command is much easier to use if we can use @ mentions, that is prefix the username with @.
+
