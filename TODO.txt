@@ -7,3 +7,4 @@
 - Give the moderator an example if the error whisper to make it easy for them.
 - Part of refactoring, pull dependencies out from `WriteContributorsToRepo` so that it can be injected and make the method testable.
 - If considering to run this in a container, remove the `Console.Read()` method from `Main`
+- Feature request: If someone has been thanked, give them the ability to nominate their Twitter name or GitHub profile to go in the contributors pull request with a chat command, e.g. "!findme @emadashi" or "!findme github.com/eashi"
