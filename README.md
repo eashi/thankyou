@@ -17,4 +17,6 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [yawnston](https://github.com/yawnston)
 - [Mitch Denny](https://github.com/mitchdenny)
 - [David Wengier](https://github.com/davidwengier)
+- [jonp333](https://twitch.tv/jonp333)
+- [ColloquialOwl](https://twtich.tv/ColloquialOwl)
 [//]: # (ThankYouBlockEnd)

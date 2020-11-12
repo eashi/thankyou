@@ -58,7 +58,7 @@ namespace ThankYou
         private static async Task WriteContributorsToRepo(string username, string password)
         {
             var nameOfThankyouBranch = "thankyou";
-            var repoUrl = _parsedOptions.repositoryUrl;
+            var repoUrl = "https://github.com/eashi/thankyou"; //_parsedOptions.repositoryUrl;
             var contributorsHeader = _parsedOptions.acknowledgementSection;
             var fileHoldingContributorsInfo = _parsedOptions.fileInRepoForAcknowledgement;
 
@@ -114,8 +114,11 @@ namespace ThankYou
                 repo.Index.Add(fileHoldingContributorsInfo);
                 repo.Index.Write();
 
+                var gitAuthorName = "eashi"; //_parsedOptions.gitAuthorName
+                var gitAuthorEmail = "eashi"; //_parsedOptions.gitAuthorEmail
+
                 // Create the committer's signature and commit
-                var author = new LibGit2Sharp.Signature(_parsedOptions.gitAuthorName, _parsedOptions.gitAuthorEmail, DateTime.Now);
+                var author = new LibGit2Sharp.Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
                 var committer = author;
 
                 // Commit to the repository
@@ -255,13 +258,13 @@ namespace ThankYou
         [Option(Required = true)]
         public string repoPassword { get; internal set; }
 
-        [Option(Required = true)]
+        [Option(Required = false)]
         public string gitAuthorEmail { get; set; }
 
-        [Option(Required = true)]
+        [Option(Required = false)]
         public string gitAuthorName { get; set; }
 
-        [Option(Required = true)]
+        [Option(Required = false)]
         public string repositoryUrl { get; set; }
 
         [Option(Default = "readme.md")]
