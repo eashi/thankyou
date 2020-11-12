@@ -8,6 +8,8 @@ This project itself is built live on [Twitch](https://twitch.tv/emadashi), we st
 
 This work wouldn't have been the same without the awesome contributors on the Twitch channel. Here is a list of these awesome people:
 
+[//]: # (ThankYouBlockStart)
+[//]: # (ThankYouTemplate: - [@name](https://twitch.tv/@name))
 - [melbshaker](https://twitch.tv/melbshaker)
 - [JaanEnn](https://twitch.tv/jaanenn)
 - [Vote_Anarchy](https://twitch.tv/vote_anarchy)
@@ -15,3 +17,4 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [yawnston](https://github.com/yawnston)
 - [Mitch Denny](https://github.com/mitchdenny)
 - [David Wengier](https://github.com/davidwengier)
+[//]: # (ThankYouBlockEnd)
