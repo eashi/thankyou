@@ -17,4 +17,5 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [yawnston](https://github.com/yawnston)
 - [Mitch Denny](https://github.com/mitchdenny)
 - [David Wengier](https://github.com/davidwengier)
+ - [Yoda](https://twitch.tv/Yoda)
 [//]: # (ThankYouBlockEnd)
