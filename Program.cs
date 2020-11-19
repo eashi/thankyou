@@ -34,6 +34,8 @@ namespace ThankYou
                 {
                     _parsedOptions.twitchUserName = _parsedOptions.channelName;
                 }
+            }).WithNotParsed(errors => {
+                Environment.Exit(-1);
             });
 
             ConnectionCredentials credentials = new ConnectionCredentials(_parsedOptions.twitchUserName, _parsedOptions.accessToken);
@@ -58,7 +60,7 @@ namespace ThankYou
         private static async Task WriteContributorsToRepo(string username, string password)
         {
             var nameOfThankyouBranch = "thankyou";
-            var repoUrl = "https://github.com/eashi/thankyou"; //_parsedOptions.repositoryUrl;
+            var repoUrl = _parsedOptions.gitRepositoryUrl;
             var contributorsHeader = _parsedOptions.acknowledgementSection;
             var fileHoldingContributorsInfo = _parsedOptions.fileInRepoForAcknowledgement;
 
@@ -114,8 +116,8 @@ namespace ThankYou
                 repo.Index.Add(fileHoldingContributorsInfo);
                 repo.Index.Write();
 
-                var gitAuthorName = "eashi"; //_parsedOptions.gitAuthorName
-                var gitAuthorEmail = "eashi"; //_parsedOptions.gitAuthorEmail
+                var gitAuthorName = _parsedOptions.gitAuthorName;
+                var gitAuthorEmail = _parsedOptions.gitAuthorEmail;
 
                 // Create the committer's signature and commit
                 var author = new LibGit2Sharp.Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
@@ -258,14 +260,14 @@ namespace ThankYou
         [Option(Required = true)]
         public string repoPassword { get; internal set; }
 
-        [Option(Required = false)]
+        [Option(Required = true)]
         public string gitAuthorEmail { get; set; }
 
-        [Option(Required = false)]
+        [Option(Required = true)]
         public string gitAuthorName { get; set; }
 
-        [Option(Required = false)]
-        public string repositoryUrl { get; set; }
+        [Option(Required = true)]
+        public string gitRepositoryUrl { get; set; }
 
         [Option(Default = "readme.md")]
         public string fileInRepoForAcknowledgement { get; set; }
