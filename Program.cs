@@ -221,7 +221,7 @@ namespace ThankYou
             var messageTokens = e.ChatMessage.Message.Split(' ');
             if (messageTokens.Length > 1 && messageTokens[0] == "!thanks")
             {
-                if (e.ChatMessage.IsModerator)
+                if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
                 {
                     if (messageTokens.Length == 2)
                     {

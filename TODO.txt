@@ -1,6 +1,3 @@
-- jonp333: The doco has an error handling example: CommandLine.Parser.Default.ParseArguments<Options>(args) .WithParsed(RunOptions) .WithNotParsed(HandleParseError);
-- jonp333: Change the environment variables to match all intended parameter
-- Moderatorcodeandcoffee
 - CodeAndCoffee: Another feature request has come to mind. The !thanks command is much easier to use if we can use @ mentions, that is prefix the username with @.
 - Feature request: If someone has been thanked, give them the ability to nominate their Twitter name or GitHub profile to go in the contributorsgit 
 - If considering to run this in a container, remove the `Console.Read()` method from `Main`
