@@ -226,7 +226,8 @@ namespace ThankYou
                     if (messageTokens.Length == 2)
                     {
                         Console.WriteLine($"Adding '{messageTokens[1]}' to the contributors list");
-                        _contributorsToday.Add(messageTokens[1]);
+
+                        _contributorsToday.Add(messageTokens[1].TrimStart('@'));
                     }
                     else
                     {
