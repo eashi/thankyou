@@ -18,4 +18,6 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [Mitch Denny](https://github.com/mitchdenny)
 - [David Wengier](https://github.com/davidwengier)
  - [Yoda](https://twitch.tv/Yoda)
+ - [codeandcoffee](https://twitch.tv/codeandcoffee)
+ - [CaptainBarbossa](https://twitch.tv/CaptainBarbossa)
 [//]: # (ThankYouBlockEnd)
