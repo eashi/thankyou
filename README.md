@@ -20,4 +20,5 @@ This work wouldn't have been the same without the awesome contributors on the Tw
  - [Yoda](https://twitch.tv/Yoda)
  - [codeandcoffee](https://twitch.tv/codeandcoffee)
  - [CaptainBarbossa](https://twitch.tv/CaptainBarbossa)
+ - [anonymous](https://twitch.tv/anonymous)
 [//]: # (ThankYouBlockEnd)
