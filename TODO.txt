@@ -1,8 +1,6 @@
 - Fix finding already existing contributors to ignore the casing of characters
 - Fix the error (or catch it) when a PR is already created from the author on 'thankyou' branch.
-- CodeAndCoffee: Another feature request has come to mind. The !thanks command is much easier to use if we can use @ mentions, that is prefix the username with @.
 - Feature request: If someone has been thanked, give them the ability to nominate their Twitter name or GitHub profile to go in the contributorsgit 
-- If considering to run this in a container, remove the `Console.Read()` method from `Main`
 - Refactor in general, create smaller functions...etc.
 - Create a `!todo` command to show all the todo items in the TODO.txt file, And/Or show all the //TODO comments in the repo
 - Consider not removing and re-cloning the repo everytime. Just fetch if it already exists.

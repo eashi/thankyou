@@ -23,6 +23,8 @@ namespace ThankYou
         private static List<string> _contributorsToday = new List<string>();
         private static Options _parsedOptions;
 
+        private static TaskCompletionSource<bool> taskCompletionSourceForExit = new TaskCompletionSource<bool>();
+
         static async Task Main(string[] args)
         {
             var parsedArguments = Parser.Default.ParseArguments<Options>(args);
@@ -34,7 +36,8 @@ namespace ThankYou
                 {
                     _parsedOptions.twitchUserName = _parsedOptions.channelName;
                 }
-            }).WithNotParsed(errors => {
+            }).WithNotParsed(errors =>
+            {
                 Environment.Exit(-1);
             });
 
@@ -52,7 +55,7 @@ namespace ThankYou
             _client.OnLog += Client_OnLog;
             _client.Connect();
 
-            Console.ReadKey(true);
+            await taskCompletionSourceForExit.Task;
 
             await WriteContributorsToRepo(_parsedOptions.repoUserName, _parsedOptions.repoPassword);
         }
@@ -111,7 +114,7 @@ namespace ThankYou
                 var pathToReadme = Path.Combine(tempPathGitFolder, fileHoldingContributorsInfo);
                 // Change the file and save it
                 AddContributorsToMarkdownFile(pathToReadme, _contributorsToday);
-                
+
                 // Commit the file to the repo, on a non-master branch
                 repo.Index.Add(fileHoldingContributorsInfo);
                 repo.Index.Write();
@@ -159,7 +162,7 @@ namespace ThankYou
             // This is a state machine with three states: Before contributors, contributors, and after contributors
             // Since the Before and After states behave the same way, I'm cheating and using a boolean and reducing
             // it down to two states. Hopefully it still makes sense.
-            foreach(var line in allLinesRead)
+            foreach (var line in allLinesRead)
             {
                 if (line.Equals("[//]: # (ThankYouBlockStart)"))
                 {
@@ -182,8 +185,8 @@ namespace ThankYou
                 {
                     // found the template, so now we can calculate the new lines
                     finalResult.Add(line);
-                    
-                    foreach(var contributor in contributorsToday)
+
+                    foreach (var contributor in contributorsToday)
                     {
                         //if contributor already exists
 
@@ -219,9 +222,15 @@ namespace ThankYou
             var author = e.ChatMessage.Username;
 
             var messageTokens = e.ChatMessage.Message.Split(' ');
-            if (messageTokens.Length > 1 && messageTokens[0] == "!thanks")
+
+            if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
             {
-                if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
+                if (messageTokens.Length == 1 && messageTokens[0] == "!bye")
+                {
+                    taskCompletionSourceForExit.SetResult(true);
+                }
+
+                if (messageTokens.Length > 1 && messageTokens[0] == "!thanks")
                 {
                     if (messageTokens.Length == 2)
                     {
@@ -234,13 +243,8 @@ namespace ThankYou
                         _client.SendWhisper(author, "There should be one argument for !thanks");
                     }
                 }
-                else
-                {
-                    Console.WriteLine("Sorry, you're not a moderator");
-                }
-
+                Console.WriteLine($"{author} wrote this: {input}");
             }
-            Console.WriteLine($"{author} wrote this: {input}");
         }
     }
 
