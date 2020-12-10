@@ -21,4 +21,7 @@ This work wouldn't have been the same without the awesome contributors on the Tw
  - [codeandcoffee](https://twitch.tv/codeandcoffee)
  - [CaptainBarbossa](https://twitch.tv/CaptainBarbossa)
  - [anonymous](https://twitch.tv/anonymous)
+ - [MartinSheen](https://twitch.tv/MartinSheen)
+ - [JaanEnn](https://twitch.tv/JaanEnn)
+ - [YaWnStOn](https://twitch.tv/YaWnStOn)
 [//]: # (ThankYouBlockEnd)
