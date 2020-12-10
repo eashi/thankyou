@@ -115,38 +115,44 @@ namespace ThankYou
                 // Change the file and save it
                 AddContributorsToMarkdownFile(pathToReadme, _contributorsToday);
 
-                // Commit the file to the repo, on a non-master branch
-                repo.Index.Add(fileHoldingContributorsInfo);
-                repo.Index.Write();
-
-                var gitAuthorName = _parsedOptions.gitAuthorName;
-                var gitAuthorEmail = _parsedOptions.gitAuthorEmail;
-
-                // Create the committer's signature and commit
-                var author = new LibGit2Sharp.Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
-                var committer = author;
-
-                // Commit to the repository
-                var commit = repo.Commit("A new list of awesome contributors", author, committer);
-
-                //Push the commit to origin
-                LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
-                options.CredentialsProvider = gitCredentialsHandler;
-                repo.Network.Push(repo.Head, options);
-
-                // Login to GitHub with Octokit
-                var githubClient = new GitHubClient(new ProductHeaderValue(username));
-                githubClient.Credentials = new Octokit.Credentials(password);
-
-                try
+                var status = repo.RetrieveStatus(fileHoldingContributorsInfo);
+                if (status == FileStatus.ModifiedInWorkdir)
                 {
-                    //  Create a PR on the repo for the branch "thank you"
-                    await githubClient.PullRequest.Create(username, "thankyou", new NewPullRequest("Give credit for people on Twitch chat", nameOfThankyouBranch, defaultBranch.FriendlyName));
+                    // Commit the file to the repo, on a non-master branch
+                    repo.Index.Add(fileHoldingContributorsInfo);
+                    repo.Index.Write();
+
+                    var gitAuthorName = _parsedOptions.gitAuthorName;
+                    var gitAuthorEmail = _parsedOptions.gitAuthorEmail;
+
+                    // Create the committer's signature and commit
+                    var author = new LibGit2Sharp.Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
+                    var committer = author;
+
+                    // Commit to the repository
+                    var commit = repo.Commit("A new list of awesome contributors", author, committer);
+
+                    //Push the commit to origin
+                    LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
+                    options.CredentialsProvider = gitCredentialsHandler;
+                    repo.Network.Push(repo.Head, options);
+
+                    // Login to GitHub with Octokit
+                    var githubClient = new GitHubClient(new ProductHeaderValue(username));
+                    githubClient.Credentials = new Octokit.Credentials(password);
+
+                    try
+                    {
+                        //  Create a PR on the repo for the branch "thank you"
+                        await githubClient.PullRequest.Create(username, "thankyou", new NewPullRequest("Give credit for people on Twitch chat", nameOfThankyouBranch, defaultBranch.FriendlyName));
+                    }
+                    catch (Exception ex)
+                    {
+                        // It's alright, the PR is already there. No harm is done.
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
+
+
             }
         }
 
@@ -173,7 +179,7 @@ namespace ThankYou
                 else if (line.Equals("[//]: # (ThankYouBlockEnd)") && foundThankYouBlock)
                 {
                     // Work out which ones to add
-                    var contributorsToOutput = newContributorLines.Except(existingContributorLines);
+                    var contributorsToOutput = newContributorLines.Except(existingContributorLines, StringComparer.OrdinalIgnoreCase);
                     // Add them to the end
                     finalResult.AddRange(contributorsToOutput);
                     // Now add our closing block again
