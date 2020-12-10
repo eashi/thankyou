@@ -27,19 +27,7 @@ namespace ThankYou
 
         static async Task Main(string[] args)
         {
-            var parsedArguments = Parser.Default.ParseArguments<Options>(args);
-            parsedArguments.WithParsed(options =>
-            {
-                _parsedOptions = options;
-
-                if (string.IsNullOrEmpty(_parsedOptions.twitchUserName))
-                {
-                    _parsedOptions.twitchUserName = _parsedOptions.channelName;
-                }
-            }).WithNotParsed(errors =>
-            {
-                Environment.Exit(-1);
-            });
+            ExtractArgsToOptions(args);
 
             ConnectionCredentials credentials = new ConnectionCredentials(_parsedOptions.twitchUserName, _parsedOptions.accessToken);
             var clientOptions = new ClientOptions
@@ -55,9 +43,27 @@ namespace ThankYou
             _client.OnLog += Client_OnLog;
             _client.Connect();
 
+            // We want to stop the console app from continuing, until the streamer sends the signal by the message !bye
             await taskCompletionSourceForExit.Task;
 
             await WriteContributorsToRepo(_parsedOptions.repoUserName, _parsedOptions.repoPassword);
+        }
+
+        private static void ExtractArgsToOptions(string[] args)
+        {
+            var parsedArguments = Parser.Default.ParseArguments<Options>(args);
+            parsedArguments.WithParsed(options =>
+            {
+                _parsedOptions = options;
+
+                if (string.IsNullOrEmpty(_parsedOptions.twitchUserName))
+                {
+                    _parsedOptions.twitchUserName = _parsedOptions.channelName;
+                }
+            }).WithNotParsed(errors =>
+            {
+                Environment.Exit(-1);
+            });
         }
 
         private static async Task WriteContributorsToRepo(string username, string password)
@@ -66,8 +72,9 @@ namespace ThankYou
             var repoUrl = _parsedOptions.gitRepositoryUrl;
             var contributorsHeader = _parsedOptions.acknowledgementSection;
             var fileHoldingContributorsInfo = _parsedOptions.fileInRepoForAcknowledgement;
+            
+            string tempPathGitFolder = CreateTempFolderForTheRepo();
 
-            var cloneOptions = new CloneOptions();
             var gitCredentialsHandler = new CredentialsHandler(
                     (url, usernameFromUrl, types) =>
                         new UsernamePasswordCredentials()
@@ -75,19 +82,11 @@ namespace ThankYou
                             Username = username,
                             Password = password
                         });
+
+            var cloneOptions = new CloneOptions();
             cloneOptions.CredentialsProvider = gitCredentialsHandler;
-            var tempPath = Path.GetTempPath();
-            var tempPathForRepo = Path.Combine(tempPath, "Jaan");
-            if (Directory.Exists(tempPathForRepo))
-            {
-                Directory.Delete(tempPathForRepo, true); //TODO: Don't remove and re-clone, clone only if doesn't exist
-            }
-            var tempPathGitFolder = Path.Combine(tempPath, "Jaan");
-            if (!Directory.Exists(tempPathGitFolder))
-            {
-                var directoryInfo = Directory.CreateDirectory(tempPathGitFolder);
-            }
-            LibGit2Sharp.Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions); //TODO: if the repo clone is already here, should we delete and reclone? or should we assume correct repo here.
+            LibGit2Sharp.Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions); 
+            
             using (var repo = new LibGit2Sharp.Repository(tempPathGitFolder))
             {
                 var remote = repo.Network.Remotes["origin"];
@@ -154,6 +153,18 @@ namespace ThankYou
 
 
             }
+        }
+
+        private static string CreateTempFolderForTheRepo()
+        {
+            var tempPath = Path.GetTempPath();
+            var tempPathGitFolder = Path.Combine(tempPath, "Jaan");
+            if (Directory.Exists(tempPathGitFolder))
+            {
+                Directory.Delete(tempPathGitFolder, true);
+            }
+            Directory.CreateDirectory(tempPathGitFolder);
+            return tempPathGitFolder;
         }
 
         private static void AddContributorsToMarkdownFile(string pathToReadme, List<string> contributorsToday)
