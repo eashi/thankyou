@@ -233,7 +233,7 @@ namespace ThankYou
         [Option(Required = true)]
         public string gitRepositoryUrl { get; set; }
 
-        [Option(Default = "readme.md")]
+        [Option(Default = "README.md")]
         public string fileInRepoForAcknowledgement { get; set; }
 
         [Option(Default = "Acknowledgement")]
