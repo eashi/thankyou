@@ -1,10 +1,13 @@
+- Play with Tye to build an image of app
+- Run this in a container
+- Add GitHub Action to run unit tests for PRs
+- Think of just comparing the user name (between the []) rather than comparing the whole line to detect duplicates.
+- Feature request: If someone has been thanked, give them the ability to nominate their Twitter name or GitHub profile to go in the contributorsgit 
 - Refactor in general, create smaller functions...etc.
 - Create a `!todo` command to show all the todo items in the TODO.txt file, And/Or show all the //TODO comments in the repo
 - Consider not removing and re-cloning the repo everytime. Just fetch if it already exists.
-- Melbshaker asks: "What happens if the contributor has already existed in the ReadMe file ?".
-    - for now, we don't do anything: the contributor is already there.
-    - in the future, maybe we can enhance it so the credit includes the suggestion/help they provided.
+- Melbshaker: in the future, maybe we can enhance it so the credit includes the suggestion/help they provided.
 - Give the moderator an example if the error whisper to make it easy for them.
 - Part of refactoring, pull dependencies out from `WriteContributorsToRepo` so that it can be injected and make the method testable.
-- If considering to run this in a container, remove the `Console.Read()` method from `Main`
-- Feature request: If someone has been thanked, give them the ability to nominate their Twitter name or GitHub profile to go in the contributors pull request with a chat command, e.g. "!findme @emadashi" or "!findme github.com/eashi"
+- Consider from jonp333: Could the chat bot temporarily edit the name in it's .gitconfig to the name of the person to thank and then make a commit to the repo. The git log would then show their name.
+
