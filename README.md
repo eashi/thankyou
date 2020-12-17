@@ -4,7 +4,17 @@
 
 This project itself is built live on [Twitch](https://twitch.tv/emadashi), we stream every Thursday at 20:00 Melbourne Australia time. Make sure to join us! :)
 
-# Acknowledgement
+## Contributing
+
+### Prerequisites
+
+You will need the .NET Core 3.1 SDK or later. https://dotnet.microsoft.com/download/dotnet-core
+
+### Build and test
+
+After cloning the source code, run `dotnet test` in the repository directory to compile the program and run the test suite.
+
+## Acknowledgement
 
 This work wouldn't have been the same without the awesome contributors on the Twitch channel. Here is a list of these awesome people:
 
@@ -13,7 +23,7 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [melbshaker](https://twitch.tv/melbshaker)
 - [JaanEnn](https://twitch.tv/jaanenn)
 - [Vote_Anarchy](https://twitch.tv/vote_anarchy)
-- [CodeAndCoffee](https://twitch.tv/codeandcoffee)
+- [CodeAndCoffee](https://github.com/tkoster)
 - [yawnston](https://github.com/yawnston)
 - [Mitch Denny](https://github.com/mitchdenny)
 - [David Wengier](https://github.com/davidwengier)
