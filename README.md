@@ -25,4 +25,5 @@ This work wouldn't have been the same without the awesome contributors on the Tw
  - [JaanEnn](https://twitch.tv/JaanEnn)
  - [YaWnStOn](https://twitch.tv/YaWnStOn)
  - [vote_anarchy](https://twitch.tv/vote_anarchy)
+ - [staffordwilliams](https://twitch.tv/staffordwilliams)
 [//]: # (ThankYouBlockEnd)
