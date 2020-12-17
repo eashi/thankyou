@@ -111,8 +111,11 @@ namespace ThankYou
 
 
                 var pathToReadme = Path.Combine(tempPathGitFolder, fileHoldingContributorsInfo);
+
                 // Change the file and save it
-                AddContributorsToMarkdownFile(pathToReadme, _contributorsToday);
+                var inputLines = await File.ReadAllLinesAsync(pathToReadme);
+                var outputLines = MarkdownProcessor.AddContributorsToMarkdownFile(inputLines, _contributorsToday);
+                await File.WriteAllLinesAsync(pathToReadme, outputLines);
 
                 var status = repo.RetrieveStatus(fileHoldingContributorsInfo);
                 if (status == FileStatus.ModifiedInWorkdir)
