@@ -23,7 +23,7 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [melbshaker](https://twitch.tv/melbshaker)
 - [JaanEnn](https://twitch.tv/jaanenn)
 - [Vote_Anarchy](https://twitch.tv/vote_anarchy)
-- [CodeAndCoffee](https://twitch.tv/codeandcoffee)
+- [CodeAndCoffee](https://github.com/tkoster)
 - [yawnston](https://github.com/yawnston)
 - [Mitch Denny](https://github.com/mitchdenny)
 - [David Wengier](https://github.com/davidwengier)
