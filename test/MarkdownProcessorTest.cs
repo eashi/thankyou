@@ -32,7 +32,7 @@ namespace ThankYou.Test
                 "## Contributors",
                 "",
                 "[//]: # (ThankYouBlockStart)",
-                "[//]: # \"ThouTemplate:- @name)",
+                "[//]: # \"ThankYouTemplate:- @name)",
                 "- gandalf",
                 "[//]: # (ThankYouBlockEnd)"
             };
