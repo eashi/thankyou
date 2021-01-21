@@ -37,7 +37,7 @@ namespace ThankYou
                     // Finally, turn off collection of contributors
                     foundThankYouBlock = false;
                 }
-                else if (line.StartsWith("[//]: # (ThankYouTemplate:") && foundThankYouBlock)
+                else if (line.StartsWith("[//]: # \"ThankYouTemplate:") && foundThankYouBlock)
                 {
                     // found the template, so now we can calculate the new lines
                     yield return line;
@@ -46,7 +46,7 @@ namespace ThankYou
                     {
                         //if contributor already exists
 
-                        var thankYouLine = line.Replace("[//]: # (ThankYouTemplate:", "").Replace("@name", contributor);
+                        var thankYouLine = line.Replace("[//]: # \"ThankYouTemplate:", "").Replace("@name", contributor);
                         newContributorLines.Add(thankYouLine.Substring(0, thankYouLine.Length - 1));
                     }
                 }

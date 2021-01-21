@@ -19,7 +19,7 @@ After cloning the source code, run `dotnet test` in the repository directory to 
 This work wouldn't have been the same without the awesome contributors on the Twitch channel. Here is a list of these awesome people:
 
 [//]: # (ThankYouBlockStart)
-[//]: # (ThankYouTemplate: - [@name](https://twitch.tv/@name))
+[//]: # "ThankYouTemplate: - [@name](https://twitch.tv/@name)"
 - [melbshaker](https://twitch.tv/melbshaker)
 - [JaanEnn](https://twitch.tv/jaanenn)
 - [Vote_Anarchy](https://twitch.tv/vote_anarchy)

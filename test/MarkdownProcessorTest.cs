@@ -32,7 +32,7 @@ namespace ThankYou.Test
                 "## Contributors",
                 "",
                 "[//]: # (ThankYouBlockStart)",
-                "[//]: # (ThankYouTemplate:- @name)",
+                "[//]: # \"ThankYouTemplate:- @name)",
                 "- gandalf",
                 "[//]: # (ThankYouBlockEnd)"
             };
@@ -48,7 +48,7 @@ namespace ThankYou.Test
                 "## Contributors",
                 "",
                 "[//]: # (ThankYouBlockStart)",
-                "[//]: # (ThankYouTemplate:- @name)",
+                "[//]: # \"ThankYouTemplate:- @name)",
                 "- gandalf",
                 "- boromir",
                 "[//]: # (ThankYouBlockEnd)"
@@ -67,7 +67,7 @@ namespace ThankYou.Test
                 "## Contributors",
                 "",
                 "[//]: # (ThankYouBlockStart)",
-                "[//]: # (ThankYouTemplate:- @name)",
+                "[//]: # \"ThankYouTemplate:- @name)",
                 "- frodo",
                 "[//]: # (ThankYouBlockEnd)"
             };
@@ -89,7 +89,7 @@ namespace ThankYou.Test
                 "## Contributors",
                 "",
                 "[//]: # (ThankYouBlockStart)",
-                "[//]: # (ThankYouTemplate:- @name)",
+                "[//]: # \"ThankYouTemplate:- @name)",
                 "- frodo",
                 "[//]: # (ThankYouBlockEnd)"
             };
