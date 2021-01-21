@@ -1,5 +1,3 @@
-- Play with Tye to build an image of app
-- Run this in a container
 - Add GitHub Action to run unit tests for PRs
 - Think of just comparing the user name (between the []) rather than comparing the whole line to detect duplicates.
 - Feature request: If someone has been thanked, give them the ability to nominate their Twitter name or GitHub profile to go in the contributorsgit 
