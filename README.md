@@ -20,6 +20,7 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 
 [//]: # (ThankYouBlockStart)
 [//]: # (ThankYouTemplate: - [@name](https://twitch.tv/@name))
+
 - [melbshaker](https://twitch.tv/melbshaker)
 - [JaanEnn](https://twitch.tv/jaanenn)
 - [Vote_Anarchy](https://twitch.tv/vote_anarchy)
@@ -30,3 +31,4 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [jonp333](https://twitch.tv/jonp333)
 - [ColloquialOwl](https://twitch.tv/ColloquialOwl)
 [//]: # (ThankYouBlockEnd)
+
