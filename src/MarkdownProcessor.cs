@@ -6,7 +6,11 @@ namespace ThankYou
 {
     public static class MarkdownProcessor
     {
-        public static IEnumerable<string> AddContributorsToMarkdownFile(IEnumerable<string> inputLines, IEnumerable<string> contributorsToday)
+        public static Dictionary<string, string> userServiceList = new Dictionary<string, string>(){
+            {"github", "https://github.com"},
+            {"twitch", "https://twitch.com"}
+        };
+        public static IEnumerable<string> AddContributorsToMarkdownFile(IEnumerable<string> inputLines, IEnumerable<Contributor> contributorsToday)
         {
             bool foundThankYouBlock = false;
             List<string> newContributorLines = new List<string>();
@@ -46,7 +50,7 @@ namespace ThankYou
                     {
                         //if contributor already exists
 
-                        var thankYouLine = line.Replace("[//]: # \"ThankYouTemplate:", "").Replace("@name", contributor);
+                        var thankYouLine = line.Replace("[//]: # \"ThankYouTemplate:", "").Replace("@name", contributor.Name).Replace("@serviceUrl", userServiceList[contributor.PreferredUserService]);
                         newContributorLines.Add(thankYouLine.Substring(0, thankYouLine.Length - 1));
                     }
                 }
@@ -60,7 +64,7 @@ namespace ThankYou
                 {
                     // A normal line, just add it
                     yield return line;
-                }
+                } //!thanks @voiceOfApollo
             }
         }
     }
