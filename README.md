@@ -32,4 +32,5 @@ This work wouldn't have been the same without the awesome contributors on the Tw
  - [jsobell](https://github.com/jsobell)
  - [yashints](https://twitch.com/yashints)
  - [tkoster](https://github.com/tkoster)
+ - [serviceUrl](https://github.com/serviceUrl)
 [//]: # (ThankYouBlockEnd)
