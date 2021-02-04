@@ -148,9 +148,10 @@ namespace ThankYou
                         //  Create a PR on the repo for the branch "thank you"
                         await githubClient.PullRequest.Create(username, "thankyou", new NewPullRequest("Give credit for people on Twitch chat", nameOfThankyouBranch, defaultBranch.FriendlyName));
                     }
-                    catch
+                    catch( Exception ex)
                     {
-                        // It's alright, the PR is already there. No harm is done.
+                        // This exception might be caused by an already existing PR for this branch. In this case it's ok, otherwise we will just log it.
+                        Console.WriteLine(ex.Message);
                     }
                 }
 
