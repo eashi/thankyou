@@ -29,4 +29,7 @@ This work wouldn't have been the same without the awesome contributors on the Tw
 - [David Wengier](https://github.com/davidwengier)
 - [jonp333](https://twitch.tv/jonp333)
 - [ColloquialOwl](https://twitch.tv/ColloquialOwl)
+ - [jsobell](https://github.com/jsobell)
+ - [yashints](https://twitch.com/yashints)
+ - [tkoster](https://github.com/tkoster)
 [//]: # (ThankYouBlockEnd)
