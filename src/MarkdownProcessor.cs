@@ -8,7 +8,8 @@ namespace ThankYou
     {
         public static Dictionary<string, string> userServiceList = new Dictionary<string, string>(){
             {"github", "https://github.com"},
-            {"twitch", "https://twitch.com"}
+            {"twitch", "https://twitch.com"},
+            {"twitter", "https://twitter.com"}
         };
         public static IEnumerable<string> AddContributorsToMarkdownFile(IEnumerable<string> inputLines, IEnumerable<Contributor> contributorsToday)
         {

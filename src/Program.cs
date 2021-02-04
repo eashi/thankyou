@@ -193,7 +193,7 @@ namespace ThankYou
                 {
                     if (messageTokens.Length > 3)
                     {
-                        _client.SendWhisper(author, "Wrong syntax of !thanks command. It should be like: !thanks @username [github|twitch]");
+                        _client.SendWhisper(author, "Wrong syntax of !thanks command. It should be like: !thanks @username [github|twitch|twitter]");
                     }
                     else
                     {
