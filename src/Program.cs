@@ -20,7 +20,7 @@ namespace ThankYou
     class Program
     {
         private static TwitchClient _client;
-        private static List<string> _contributorsToday = new List<string>();
+        private static List<Contributor> _contributorsToday = new List<Contributor>();
         private static Options _parsedOptions;
 
         private static TaskCompletionSource<bool> taskCompletionSourceForExit = new TaskCompletionSource<bool>();
@@ -72,7 +72,7 @@ namespace ThankYou
             var repoUrl = _parsedOptions.gitRepositoryUrl;
             var contributorsHeader = _parsedOptions.acknowledgementSection;
             var fileHoldingContributorsInfo = _parsedOptions.fileInRepoForAcknowledgement;
-            
+
             string tempPathGitFolder = CreateTempFolderForTheRepo();
 
             var gitCredentialsHandler = new CredentialsHandler(
@@ -85,8 +85,8 @@ namespace ThankYou
 
             var cloneOptions = new CloneOptions();
             cloneOptions.CredentialsProvider = gitCredentialsHandler;
-            LibGit2Sharp.Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions); 
-            
+            LibGit2Sharp.Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions);
+
             using (var repo = new LibGit2Sharp.Repository(tempPathGitFolder))
             {
                 var remote = repo.Network.Remotes["origin"];
@@ -148,7 +148,7 @@ namespace ThankYou
                         //  Create a PR on the repo for the branch "thank you"
                         await githubClient.PullRequest.Create(username, "thankyou", new NewPullRequest("Give credit for people on Twitch chat", nameOfThankyouBranch, defaultBranch.FriendlyName));
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         // It's alright, the PR is already there. No harm is done.
                     }
@@ -191,20 +191,32 @@ namespace ThankYou
 
                 if (messageTokens.Length > 1 && messageTokens[0] == "!thanks")
                 {
-                    if (messageTokens.Length == 2)
+                    if (messageTokens.Length > 3)
                     {
-                        Console.WriteLine($"Adding '{messageTokens[1]}' to the contributors list");
-
-                        _contributorsToday.Add(messageTokens[1].TrimStart('@'));
+                        _client.SendWhisper(author, "There should be one argument for !thanks");
                     }
                     else
                     {
-                        _client.SendWhisper(author, "There should be one argument for !thanks");
+                        Console.WriteLine($"Adding '{messageTokens[1]}' to the contributors list");
+
+                        var userPreferredService = "twitch";
+                        if (messageTokens.Length == 3)
+                        {
+                            MarkdownProcessor.userServiceList.TryGetValue(messageTokens[2].ToLower(), out userPreferredService);
+                        }
+
+                        _contributorsToday.Add(new Contributor{ Name = messageTokens[1].TrimStart('@'), PreferredUserService = userPreferredService});
                     }
                 }
                 Console.WriteLine($"{author} wrote this: {input}");
             }
         }
+    }
+
+    public class Contributor
+    {
+        public string Name { get; set; }
+        public string PreferredUserService { get; set; }
     }
 
     internal class Options

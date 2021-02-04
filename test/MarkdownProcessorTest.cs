@@ -14,7 +14,7 @@ namespace ThankYou.Test
                 "",
                 "This is a secret app with no contributors."
             };
-            var contributors = new[] { "new" };
+            var contributors = new[] { new Contributor{ Name = "new", PreferredUserService = "twitch" } };
 
             var outputLines = MarkdownProcessor.AddContributorsToMarkdownFile(inputLines, contributors).ToArray();
 
@@ -36,7 +36,8 @@ namespace ThankYou.Test
                 "- gandalf",
                 "[//]: # (ThankYouBlockEnd)"
             };
-            var contributors = new[] { "boromir" };
+            var contributors = new[] { new Contributor{ Name = "boromir", PreferredUserService = "twitch" } };
+
 
             var outputLines = MarkdownProcessor.AddContributorsToMarkdownFile(inputLines, contributors).ToArray();
 
@@ -71,7 +72,8 @@ namespace ThankYou.Test
                 "- frodo",
                 "[//]: # (ThankYouBlockEnd)"
             };
-            var contributors = new[] { "frodo" };
+            var contributors = new[] { new Contributor{ Name = "frodo", PreferredUserService = "twitch" } };
+
 
             var outputLines = MarkdownProcessor.AddContributorsToMarkdownFile(inputLines, contributors).ToArray();
 
@@ -93,7 +95,11 @@ namespace ThankYou.Test
                 "- frodo",
                 "[//]: # (ThankYouBlockEnd)"
             };
-            var contributors = new[] { "Frodo", "froDo" };
+            var contributors = new[] { 
+                new Contributor{ Name = "Frodo", PreferredUserService = "twitch" }, 
+                new Contributor{ Name = "froDo", PreferredUserService = "twitch" } 
+                };
+
 
             var outputLines = MarkdownProcessor.AddContributorsToMarkdownFile(inputLines, contributors).ToArray();
 
