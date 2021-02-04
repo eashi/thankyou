@@ -50,7 +50,7 @@ namespace ThankYou
                     {
                         //if contributor already exists
 
-                        var thankYouLine = line.Replace("[//]: # \"ThankYouTemplate:", "").Replace("@name", contributor.Name).Replace("@serviceUrl", userServiceList[contributor.PreferredUserService]);
+                        var thankYouLine = line.Replace("[//]: # \"ThankYouTemplate:", "").Replace("@name", contributor.Name).Replace("@serviceUrl", contributor.PreferredUserService);
                         newContributorLines.Add(thankYouLine.Substring(0, thankYouLine.Length - 1));
                     }
                 }

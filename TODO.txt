@@ -1,4 +1,3 @@
-- Feature request: If someone has been thanked, give them the ability to nominate their Twitter name or GitHub profile to go in the contributorsgit 
 - Upgrade to dotnet 5.0, and use Records for the classes that just holds data.
 - Create a `!todo` command to show all the todo items in the TODO.txt file, And/Or show all the //TODO comments in the repo
 - Melbshaker: in the future, maybe we can enhance it so the credit includes the suggestion/help they provided.
