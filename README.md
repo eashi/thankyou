@@ -33,4 +33,5 @@ This work wouldn't have been the same without the awesome contributors on the Tw
  - [yashints](https://twitch.com/yashints)
  - [tkoster](https://github.com/tkoster)
  - [serviceUrl](https://github.com/serviceUrl)
+ - [Lam1ngt0nPr1m3](twitch/Lam1ngt0nPr1m3)
 [//]: # (ThankYouBlockEnd)
