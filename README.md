@@ -34,4 +34,5 @@ This work wouldn't have been the same without the awesome contributors on the Tw
  - [tkoster](https://github.com/tkoster)
  - [codeandcoffee](twitch/codeandcoffee)
  - [Lam1ngt0nPr1m3](twitch/Lam1ngt0nPr1m3)
+ - [TaylorSwift](twitch/TaylorSwift)
 [//]: # (ThankYouBlockEnd)
