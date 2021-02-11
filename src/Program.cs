@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommandLine;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
+using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Parsers.Markdown;
 using Microsoft.Toolkit.Parsers.Markdown.Blocks;
 using Octokit;
@@ -20,6 +21,7 @@ namespace ThankYou
     class Program
     {
         private static TwitchClient _client;
+        private static ILogger _logger;
         private static List<Contributor> _contributorsToday = new List<Contributor>();
         private static Options _parsedOptions;
 
@@ -28,6 +30,11 @@ namespace ThankYou
         static async Task Main(string[] args)
         {
             ExtractArgsToOptions(args);
+
+            _logger = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+            }).CreateLogger<Program>();
 
             ConnectionCredentials credentials = new ConnectionCredentials(_parsedOptions.twitchUserName, _parsedOptions.accessToken);
             var clientOptions = new ClientOptions
@@ -120,39 +127,45 @@ namespace ThankYou
                 var status = repo.RetrieveStatus(fileHoldingContributorsInfo);
                 if (status == FileStatus.ModifiedInWorkdir)
                 {
-                    // Commit the file to the repo, on a non-master branch
-                    repo.Index.Add(fileHoldingContributorsInfo);
-                    repo.Index.Write();
-
-                    var gitAuthorName = _parsedOptions.gitAuthorName;
-                    var gitAuthorEmail = _parsedOptions.gitAuthorEmail;
-
-                    // Create the committer's signature and commit
-                    var author = new LibGit2Sharp.Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
-                    var committer = author;
-
-                    // Commit to the repository
-                    var commit = repo.Commit("A new list of awesome contributors", author, committer);
-
-                    //Push the commit to origin
-                    LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
-                    options.CredentialsProvider = gitCredentialsHandler;
-                    repo.Network.Push(repo.Head, options);
-
-                    // Login to GitHub with Octokit
-                    var githubClient = new GitHubClient(new ProductHeaderValue(username));
-                    githubClient.Credentials = new Octokit.Credentials(password);
-
                     try
                     {
+                        // Commit the file to the repo, on a non-master branch
+                        repo.Index.Add(fileHoldingContributorsInfo);
+                        repo.Index.Write();
+
+                        var gitAuthorName = _parsedOptions.gitAuthorName;
+                        var gitAuthorEmail = _parsedOptions.gitAuthorEmail;
+
+                        // Create the committer's signature and commit
+                        var author = new LibGit2Sharp.Signature(gitAuthorName, gitAuthorEmail, DateTime.Now);
+                        var committer = author;
+
+                        // Commit to the repository
+                        var commit = repo.Commit("A new list of awesome contributors", author, committer);
+
+                        //Push the commit to origin
+                        LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
+                        options.CredentialsProvider = gitCredentialsHandler;
+                        repo.Network.Push(repo.Head, options);
+
+                        // Login to GitHub with Octokit
+                        var githubClient = new GitHubClient(new ProductHeaderValue(username));
+                        githubClient.Credentials = new Octokit.Credentials(password);
+
+
                         //  Create a PR on the repo for the branch "thank you"
                         await githubClient.PullRequest.Create(username, "thankyou", new NewPullRequest("Give credit for people on Twitch chat", nameOfThankyouBranch, defaultBranch.FriendlyName));
                     }
-                    catch( Exception ex)
+                    catch (Exception ex)
                     {
                         // This exception might be caused by an already existing PR for this branch. In this case it's ok, otherwise we will just log it.
-                        Console.WriteLine(ex.Message);
+                        _logger.LogError(ex, $"Ops, We couldn't create the PR. But here is the list of contributors you were trying to add {string.Join(", ", _contributorsToday.Select(c => c.Name))}");
                     }
+
+                }
+                else
+                {
+                    _logger.LogInformation("There was no changes on the README file, this means that either there was no contributors, or all today's contributors are duplicates.");
                 }
 
 
@@ -173,7 +186,7 @@ namespace ThankYou
 
         private static void Client_OnLog(object sender, OnLogArgs e)
         {
-            Console.WriteLine($"Log {e.DateTime}: botname: {e.BotUsername}, Data: {e.Data}");
+            _logger.LogInformation($"Log {e.DateTime}: botname: {e.BotUsername}, Data: {e.Data}");
         }
 
         private static void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -194,12 +207,12 @@ namespace ThankYou
                 {
                     if (messageTokens.Length > 3)
                     {
-                        _client.SendWhisper(author, 
+                        _client.SendWhisper(author,
                         $"Wrong syntax of !thanks command. It should be like: !thanks @username [{string.Join('|', MarkdownProcessor.userServiceList.Keys)}]");
                     }
                     else
                     {
-                        Console.WriteLine($"Adding '{messageTokens[1]}' to the contributors list");
+                        _logger.LogInformation($"Adding '{messageTokens[1]}' to the contributors list");
 
                         var userPreferredService = "twitch";
                         if (messageTokens.Length == 3)
@@ -207,10 +220,10 @@ namespace ThankYou
                             MarkdownProcessor.userServiceList.TryGetValue(messageTokens[2].ToLower(), out userPreferredService);
                         }
 
-                        _contributorsToday.Add(new Contributor{ Name = messageTokens[1].TrimStart('@'), PreferredUserService = userPreferredService});
+                        _contributorsToday.Add(new Contributor { Name = messageTokens[1].TrimStart('@'), PreferredUserService = userPreferredService });
                     }
                 }
-                Console.WriteLine($"{author} wrote this: {input}");
+                _logger.LogInformation($"{author} wrote this: {input}");
             }
         }
     }
