@@ -4,7 +4,57 @@
 
 This project itself is built live on [Twitch](https://twitch.tv/emadashi), we stream every Thursday at 20:00 Melbourne Australia time. Make sure to join us! :)
 
+## How it Works
+
+Once the bot is started, it will connecto to the Twitch channel and starts listening to the chat. 
+
+If the streamer wants to give credit to someone in the chat for their help, the streamer or the moderator would send the following message on the chat channel:
+
+```
+!thanks [name of contributor] [github/twitch]
+```
+Example:
+```
+!thanks @tkoster github
+```
+
+Once the bot receives this message, it will register `tkoster` and will generate a link to `https://github.com/tkoster` stored in memory. 
+
+Once the streamer is ready about to finish the stream, they will send the command `!bye`, which will signal to the bot to wrap up.
+Then the bot will find the designated part of the markdown file, and will insert the link in that area.
+
+### The Designated Part in Markdown
+
+How does the bot know which part of the Markdown file it needs to put the aknolwedgement in? Whereever the streamer wants really! 
+
+All what the streamer needs to do is to insert the following comment in the Markdown file, and the bot will find it and will insert the records there.
+
+```
+[//]: # (ThankYouBlockStart)
+[//]: # "ThankYouTemplate: - [@name](@serviceUrl/@name)"
+
+[//]: # (ThankYouBlockEnd)
+```
+
+## Running The Bot
+
+The bot is just a simple console application. It needs the following parameters to run successfully
+
+- "--twitchusername",
+- --channelname
+- --accesstoken",
+- --repousername",
+- --repopassword",
+- --gitauthorname",
+- --gitauthoremail",
+- --gitrepositoryurl",
+
+### From Command Line
+
+### From Container
+
 ## Contributing
+
 
 ### Prerequisites
 
