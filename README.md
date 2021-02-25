@@ -40,14 +40,14 @@ All what the streamer needs to do is to insert the following comment in the Mark
 
 The bot is just a simple console application. It needs the following parameters to run successfully
 
-- "--twitchusername",
+- --twitchusername
 - --channelname
-- --accesstoken",
-- --repousername",
-- --repopassword",
-- --gitauthorname",
-- --gitauthoremail",
-- --gitrepositoryurl",
+- --accesstoken
+- --repousername
+- --repopassword
+- --gitauthorname
+- --gitauthoremail
+- --gitrepositoryurl
 
 ### From Command Line
 
