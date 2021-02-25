@@ -52,6 +52,10 @@ The bot is just a simple console application. It needs the following parameters 
 ### From Command Line
 
 ### From Container
+If you build the docker image from the Docker file in the solution with the name `thankyou:manual`, then you can use the following command to run the container. Don't forget to set the right values to the environment variables!
+```
+docker run thankyou:manual --twitchusername $twitchUserName --channelname $twitchChannelName --accesstoken $twitchAccessToken --repousername $gitUserName --repopassword $githubAccessToken --gitauthorname $gitAuthorName --gitauthoremail $gitAuthorEmail --gitrepositoryurl $gitRepositoryUrl --fileinrepoforacknowledgement README.md
+```
 
 ## Contributing
 
