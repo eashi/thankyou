@@ -9,7 +9,7 @@
         "type": "coreclr",
         "request": "launch",
         "preLaunchTask": "build",
-        "program": "${workspaceFolder}/src/bin/Debug/netcoreapp3.1/ThankYou.dll",
+        "program": "${workspaceFolder}/src/bin/Debug/net5.0/ThankYou.dll",
         "args": [
             "--twitchusername",
             "${env:twitchUserName}",
