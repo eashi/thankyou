@@ -1,5 +1,5 @@
+- Fix adding a new contribution in the guidance block :)
 - Use the new C# 9.0 Records for the classes that just holds data.
-- Remove the stack trace from the exception logged when there is an already existing PR (or not log it at all)
 - Push a docker image to GitHub repo on changes.
 - Terminate the bot when the stream is finished (check if there is such an event exists).
 - Create a `!todo` command to show all the todo items in the TODO.txt file, And/Or show all the //TODO comments in the repo

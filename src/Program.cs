@@ -76,11 +76,18 @@ namespace ThankYou
         private static async Task WriteContributorsToRepo(string username, string password)
         {
             var nameOfThankyouBranch = "thankyou";
-            var repoUrl = _parsedOptions.gitRepositoryUrl;
             var contributorsHeader = _parsedOptions.acknowledgementSection;
             var fileHoldingContributorsInfo = _parsedOptions.fileInRepoForAcknowledgement;
+            var githubRepoOwner = _parsedOptions.githubRepoOwner;
+            var githubRepoName = _parsedOptions.githubRepoName;
 
             string tempPathGitFolder = CreateTempFolderForTheRepo();
+
+            // Login to GitHub with Octokit
+            var githubClient = new GitHubClient(new ProductHeaderValue(username));
+            githubClient.Credentials = new Octokit.Credentials(password);
+            
+            var githubRepo = await githubClient.Repository.Get(githubRepoOwner, githubRepoName); 
 
             var gitCredentialsHandler = new CredentialsHandler(
                     (url, usernameFromUrl, types) =>
@@ -92,7 +99,7 @@ namespace ThankYou
 
             var cloneOptions = new CloneOptions();
             cloneOptions.CredentialsProvider = gitCredentialsHandler;
-            LibGit2Sharp.Repository.Clone(repoUrl, tempPathGitFolder, cloneOptions);
+            LibGit2Sharp.Repository.Clone(githubRepo.CloneUrl, tempPathGitFolder, cloneOptions);
 
             using (var repo = new LibGit2Sharp.Repository(tempPathGitFolder))
             {
@@ -148,13 +155,21 @@ namespace ThankYou
                         options.CredentialsProvider = gitCredentialsHandler;
                         repo.Network.Push(repo.Head, options);
 
-                        // Login to GitHub with Octokit
-                        var githubClient = new GitHubClient(new ProductHeaderValue(username));
-                        githubClient.Credentials = new Octokit.Credentials(password);
+                        // Check if there is already a PR exist for the same branch
+                        var prsOfRepo = await githubClient.PullRequest.GetAllForRepository(githubRepoOwner, githubRepoName, new PullRequestRequest { Head = "", State = ItemStateFilter.Open });
+                        var currentPR = prsOfRepo.FirstOrDefault();
+
+                        if (currentPR == null)
+                        {
+                            //  Create a PR on the repo for the branch "thank you"
+                            await githubClient.PullRequest.Create(username, githubRepoName, new NewPullRequest("Give credit for people on Twitch chat", nameOfThankyouBranch, defaultBranch.FriendlyName));
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Pull Rrequest is already created");
+                        }
 
 
-                        //  Create a PR on the repo for the branch "thank you"
-                        await githubClient.PullRequest.Create(username, "thankyou", new NewPullRequest("Give credit for people on Twitch chat", nameOfThankyouBranch, defaultBranch.FriendlyName));
                     }
                     catch (Exception ex)
                     {
@@ -258,7 +273,10 @@ namespace ThankYou
         public string gitAuthorName { get; set; }
 
         [Option(Required = true)]
-        public string gitRepositoryUrl { get; set; }
+        public string githubRepoOwner { get; set; }
+
+        [Option(Required = true)]
+        public string githubRepoName { get; set; }
 
         [Option(Default = "README.md")]
         public string fileInRepoForAcknowledgement { get; set; }
