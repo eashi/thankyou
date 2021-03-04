@@ -14,6 +14,7 @@ namespace ThankYou
         public static IEnumerable<string> AddContributorsToMarkdownFile(IEnumerable<string> inputLines, IEnumerable<Contributor> contributorsToday)
         {
             bool foundThankYouBlock = false;
+            bool startedACodeBlock = false;
             List<string> newContributorLines = new List<string>();
             List<string> existingContributorLines = new List<string>();
 
@@ -22,7 +23,16 @@ namespace ThankYou
             // it down to two states. Hopefully it still makes sense.
             foreach (var line in inputLines)
             {
-                if (line.Equals("[//]: # (ThankYouBlockStart)"))
+                if (line.Equals("```"))
+                {
+                    startedACodeBlock = !startedACodeBlock;
+                }
+                if (startedACodeBlock)
+                {
+                    yield return line;
+                    continue;
+                }
+                else if (!startedACodeBlock && line.Equals("[//]: # (ThankYouBlockStart)") )
                 {
                     // Found the start of the thank you block, so start collecting contributors
                     foundThankYouBlock = true;

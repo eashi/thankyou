@@ -1,4 +1,3 @@
-- Fix adding a new contribution in the guidance block :)
 - Use the new C# 9.0 Records for the classes that just holds data.
 - Push a docker image to GitHub repo on changes.
 - Terminate the bot when the stream is finished (check if there is such an event exists).
