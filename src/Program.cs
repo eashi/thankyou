@@ -156,8 +156,8 @@ namespace ThankYou
                         repo.Network.Push(repo.Head, options);
 
                         // Check if there is already a PR exist for the same branch
-                        var prsOfRepo = await githubClient.PullRequest.GetAllForRepository(githubRepoOwner, githubRepoName, new PullRequestRequest { Head = "", State = ItemStateFilter.Open });
-                        var currentPR = prsOfRepo.FirstOrDefault();
+                        var prsOfRepo = await githubClient.PullRequest.GetAllForRepository(githubRepoOwner, githubRepoName, new PullRequestRequest { State = ItemStateFilter.Open });
+                        var currentPR = prsOfRepo.FirstOrDefault(x => x.Head.Label == $"{githubRepoOwner}:{nameOfThankyouBranch}");
 
                         if (currentPR == null)
                         {
@@ -166,7 +166,7 @@ namespace ThankYou
                         }
                         else
                         {
-                            _logger.LogWarning("Pull Rrequest is already created");
+                            _logger.LogWarning($"Pull Rrequest is already created. Check PR {currentPR.Id}");
                         }
 
 
