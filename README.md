@@ -34,6 +34,7 @@ All what the streamer needs to do is to insert the following comment in the Mark
 [//]: # "ThankYouTemplate: - [@name](@serviceUrl/@name)"
 
  - [captainplanet](twitch/captainplanet)
+ - [xyz](twitch/xyz)
 [//]: # (ThankYouBlockEnd)
 ```
 
@@ -88,4 +89,5 @@ This work wouldn't have been the same without the awesome contributors on the Tw
  - [yashints](https://twitch.com/yashints)
  - [tkoster](https://github.com/tkoster)
  - [captainplanet](twitch/captainplanet)
+ - [xyz](twitch/xyz)
 [//]: # (ThankYouBlockEnd)
