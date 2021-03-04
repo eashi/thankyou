@@ -36,6 +36,7 @@ All what the streamer needs to do is to insert the following comment in the Mark
  - [captainplanet](twitch/captainplanet)
  - [xyz](twitch/xyz)
  - [someone](twitch/someone)
+ - [lutfi](twitch/lutfi)
 [//]: # (ThankYouBlockEnd)
 ```
 
@@ -92,4 +93,5 @@ This work wouldn't have been the same without the awesome contributors on the Tw
  - [captainplanet](twitch/captainplanet)
  - [xyz](twitch/xyz)
  - [someone](twitch/someone)
+ - [lutfi](twitch/lutfi)
 [//]: # (ThankYouBlockEnd)
