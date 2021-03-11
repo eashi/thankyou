@@ -235,7 +235,7 @@ namespace ThankYou
                             MarkdownProcessor.userServiceList.TryGetValue(messageTokens[2].ToLower(), out userPreferredService);
                         }
 
-                        _contributorsToday.Add(new Contributor { Name = messageTokens[1].TrimStart('@'), PreferredUserService = userPreferredService });
+                        _contributorsToday.Add(new Contributor(messageTokens[1].TrimStart('@'), userPreferredService));
                     }
                 }
                 _logger.LogInformation($"{author} wrote this: {input}");
@@ -243,11 +243,13 @@ namespace ThankYou
         }
     }
 
-    public class Contributor
-    {
-        public string Name { get; set; }
-        public string PreferredUserService { get; set; }
-    }
+    // public class Contributor
+    // {
+    //     public string Name { get; set; }
+    //     public string PreferredUserService { get; set; }
+    // }
+
+    public record Contributor(string Name, string PreferredUserService);
 
     internal class Options
     {
