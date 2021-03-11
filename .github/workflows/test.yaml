@@ -19,6 +19,7 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
   container:
+    needs: build
     runs-on: ubuntu-latest
     if: ${{ success() }} && github.ref == 'ref/heads/master'
     steps:
@@ -30,5 +31,5 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
-          repository: eashi/thankyou
+          repository: eashi/thankyou/thankyou
           tag_with_ref: true
